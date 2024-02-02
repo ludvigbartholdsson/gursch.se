@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+h1 {
+	@apply text-6xl mb-4;
+}
+
+h2 {
+	@apply text-4xl block my-3;
+}
+
+h3 {
+	@apply text-2xl block my-3;
+}
+
+ul {
+	@apply list-disc pl-4;
+}
+
+ol {
+	@apply list-decimal pl-4;
+}
+
+a {
+	@apply text-blue-500 font-semibold hover:underline;
+}
+
+table {
+	@apply my-4 border divide-gray-200;
+}
+
+thead {
+	@apply border border-gray-200;
+}
+
+th {
+	@apply p-4 text-left text-sm font-semibold text-gray-900;
+}
+
+tr {
+	@apply divide-x divide-y divide-gray-200;
+}
+
+tbody {
+	@apply divide-y divide-gray-200 bg-white;
+}
+
+td {
+	@apply whitespace-nowrap p-4 text-sm font-medium text-gray-900;
+}

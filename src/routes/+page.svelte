@@ -1,2 +1,13 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script lang="ts">
+	import type { PageServerData } from './$types';
+
+	export let data: PageServerData;
+</script>
+
+<svelte:head>
+	<title>Gursch.se</title>
+</svelte:head>
+
+<div class="container py-12 mx-auto">
+	{@html data.bodyHTML}
+</div>
