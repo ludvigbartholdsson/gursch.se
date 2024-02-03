@@ -24,7 +24,7 @@
 			<div class="col-span-1 rounded-lg text-black border-2 bg-white text-center shadow">
 				<div class="flex flex-1 justify-center items-center flex-col p-8">
 					<h3 class="">Spela online</h3>
-					<p>Ska du spela Gursch nu? Klicka här för att sätta igång en offline-session.</p>
+					<p>Här kan du spela Gursch online med dina kära vänner.</p>
 					<div
 						class="inline-flex items-center rounded-full mt-3 w-fit bg-green-50 px-3 py-2 text-green-700 ring-1 ring-inset ring-green-600/20"
 					>

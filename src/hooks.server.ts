@@ -19,6 +19,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 				emailAddress: account.emailAddress,
 				latestLogin: account.latestLogin,
 				latestChange: account.latestChange,
+				correlationId: cookies.correlationId,
 				created: account.created
 			};
 		}

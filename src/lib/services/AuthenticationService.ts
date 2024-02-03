@@ -37,36 +37,52 @@ export class AuthenticationService {
 		};
 	}
 
+	async accountExists(emailAddress: string): Promise<boolean> {
+		const account = (
+			await db.select().from(users).where(eq(users.emailAddress, emailAddress))
+		)?.[0];
+
+		return !!account;
+	}
+
+	async createAccount(emailAddress: string, password: string, firstName: string, lastName: string) {
+		const salt = await bcrypt.genSalt(saltRounds);
+		const hashedPassword = await bcrypt.hash(password, salt);
+
+		await db.insert(users).values({
+			emailAddress: emailAddress,
+			password: hashedPassword,
+			firstName,
+			lastName,
+			latestLogin: new Date(),
+			latestChange: new Date(),
+			created: new Date()
+		});
+	}
+
 	async login(password: string, emailAddress: string): Promise<LoginResponse> {
 		const account = (
 			await db.select().from(users).where(eq(users.emailAddress, emailAddress))
 		)?.[0];
 
 		if (!account) {
-			const salt = await bcrypt.genSalt(saltRounds);
-			const hashedPassword = await bcrypt.hash(password, salt);
-
-			await db.insert(users).values({
-				emailAddress: emailAddress,
-				password: hashedPassword,
-				latestLogin: new Date(),
-				latestChange: new Date(),
-				created: new Date()
-			});
-		} else {
-			const isPasswordCorrect = await bcrypt.compare(password, account.password);
-
-			if (!isPasswordCorrect) {
-				return {
-					error: 'Felaktigt lösenord.'
-				};
-			}
-
-			await db
-				.update(users)
-				.set({ latestLogin: new Date() })
-				.where(eq(users.emailAddress, emailAddress));
+			return {
+				error: 'Inget konto hittades.'
+			};
 		}
+
+		const isPasswordCorrect = await bcrypt.compare(password, account.password);
+
+		if (!isPasswordCorrect) {
+			return {
+				error: 'Felaktigt lösenord.'
+			};
+		}
+
+		await db
+			.update(users)
+			.set({ latestLogin: new Date() })
+			.where(eq(users.emailAddress, emailAddress));
 
 		const correlationId = crypto.randomUUID();
 
@@ -79,6 +95,10 @@ export class AuthenticationService {
 		return {
 			correlationId
 		};
+	}
+
+	async signOut(correlationId: string) {
+		await db.delete(loginSessions).where(eq(loginSessions.correlationId, correlationId));
 	}
 
 	async changePassword(emailAddress: string, newPassword: string) {

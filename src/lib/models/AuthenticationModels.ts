@@ -11,3 +11,7 @@ export interface User {
 	latestChange: string;
 	created: string;
 }
+
+export interface UserSession extends User {
+	correlationId: string;
+}

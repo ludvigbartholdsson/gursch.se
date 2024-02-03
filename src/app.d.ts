@@ -1,13 +1,13 @@
 // See https://kit.svelte.dev/docs/types#app
 
-import type { User } from '$lib/models/AuthenticationModels';
+import type { UserSession } from '$lib/models/AuthenticationModels';
 
 // for information about these interfaces
 declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			user?: User;
+			user?: UserSessions;
 		}
 		// interface PageData {}
 		// interface PageState {}
