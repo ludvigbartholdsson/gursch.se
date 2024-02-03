@@ -2,11 +2,17 @@
 	import { page } from '$app/stores';
 	let navOpen = false;
 
-	const navItems = [
-		{ name: 'Regler', href: '/' },
-		{ name: 'Logga in', href: '/login' },
-		{ name: 'Leaderboard', href: '/leaderboard' }
+	let navItems = [
+		{ name: 'Regler', href: '/', showWhenAuthenticated: true },
+		{ name: 'Logga in', href: '/login', showWhenAuthenticated: false },
+		{ name: 'Leaderboard', href: '/leaderboard', showWhenAuthenticated: true }
 	];
+
+	$: {
+		if ($page.data.user) {
+			navItems = navItems.filter((e) => e.showWhenAuthenticated);
+		}
+	}
 </script>
 
 <nav class="bg-white shadow">
@@ -52,14 +58,14 @@
 			</div>
 			<div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
 				<div class="flex flex-shrink-0 items-center">
-					<h3>Gursch.se</h3>
+					<a href="/"><h3>Gursch.se</h3></a>
 				</div>
 				<div class="hidden sm:ml-6 sm:flex sm:space-x-8">
 					{#each navItems as item}
 						<a
 							href={item.href}
 							class="navItem"
-							class:navItemActive={$page.url.pathname.includes(item.href)}>{item.name}</a
+							class:navItemActive={$page.url.pathname === item.href}>{item.name}</a
 						>
 					{/each}
 				</div>
@@ -74,7 +80,7 @@
 				<a
 					href={item.href}
 					class="mobileNavItem"
-					class:mobileNavItemActive={$page.url.pathname.includes(item.href)}>{item.name}</a
+					class:mobileNavItemActive={$page.url.pathname === item.href}>{item.name}</a
 				>
 			{/each}
 		</div>

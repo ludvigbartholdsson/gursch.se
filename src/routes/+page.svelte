@@ -8,6 +8,12 @@
 	<title>Gursch.se</title>
 </svelte:head>
 
-<div class="container py-12 mx-auto">
-	{@html data.bodyHTML}
+<div class="container discussionLanding py-12 mx-auto">
+	{@html data.discussion.bodyHTML}
 </div>
+
+<style lang="postcss">
+	:global(.discussionLanding a) {
+		@apply hover:underline;
+	}
+</style>

@@ -22,8 +22,12 @@ ol {
 	@apply list-decimal pl-4;
 }
 
+p {
+	@apply font-normal;
+}
+
 a {
-	@apply text-blue-500 font-semibold hover:underline;
+	@apply text-blue-500 font-semibold;
 }
 
 table {
