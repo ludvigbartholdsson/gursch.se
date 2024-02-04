@@ -13,15 +13,15 @@
 	</div>
 
 	<div class="sm:mx-auto sm:w-full sm:max-w-sm">
-		{#if !form}
+		{#if !form || typeof form?.accountExists === 'undefined'}
 			<AccountExists />
 		{/if}
 
-		{#if form && !form?.accountExists}
+		{#if form && form?.accountExists === false}
 			<CreateAccount emailAddress={form.emailAddress} />
 		{/if}
 
-		{#if form && form?.accountExists}
+		{#if form && form?.accountExists === true}
 			<FinalizeLogin emailAddress={form.emailAddress} />
 		{/if}
 

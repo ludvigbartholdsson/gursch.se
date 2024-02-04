@@ -5,6 +5,9 @@
 
 	export let emailAddress: string;
 
+	let firstName: string = '';
+	let lastName: string = '';
+
 	function focusNextInput(event: KeyboardEvent, currentIndex: number): void {
 		const target = event.target as HTMLInputElement;
 		const nextIndex = target.value ? currentIndex + 1 : currentIndex - 1;
@@ -21,6 +24,29 @@
 			inputs[nextIndex].focus();
 		}
 	}
+
+	function validateName(event: any, isFirstName: boolean) {
+		const pattern =
+			/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u; // Adjust the regex pattern to include any specific characters you want to allow
+		const input = event.target.value
+			.split(' ')
+			.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+			.join(' ');
+
+		if (pattern.test(input)) {
+			if (isFirstName) {
+				firstName = input;
+			} else {
+				lastName = input;
+			}
+		} else {
+			if (isFirstName) {
+				event.target.value = firstName;
+			} else {
+				event.target.value = lastName;
+			}
+		}
+	}
 </script>
 
 <form class="space-y-6" method="POST" action="?/createAccount">
@@ -28,8 +54,11 @@
 		<label for="firstName" class="block text-sm font-medium leading-6 text-gray-900">Förnamn</label>
 		<div class="mt-2">
 			<input
+				value={firstName}
+				on:input={(e) => validateName(e, true)}
 				id="firstName"
 				name="firstName"
+				autocomplete="given-name"
 				type="text"
 				required
 				class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 !outline-none sm:text-sm sm:leading-6"
@@ -41,8 +70,11 @@
 		>
 		<div class="mt-2">
 			<input
+				value={lastName}
+				on:input={(e) => validateName(e, false)}
 				id="lastName"
 				name="lastName"
+				autocomplete="family-name"
 				type="text"
 				required
 				class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 !outline-none sm:text-sm sm:leading-6"

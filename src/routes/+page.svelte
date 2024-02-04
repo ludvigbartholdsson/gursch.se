@@ -19,4 +19,8 @@
 	:global(.discussionLanding a) {
 		@apply hover:underline;
 	}
+
+	:global(.discussionLanding table) {
+		@apply overflow-x-auto whitespace-nowrap block;
+	}
 </style>
