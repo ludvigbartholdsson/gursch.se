@@ -8,7 +8,7 @@
 	<div>
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
 			<a
-				href="/dashboard/session"
+				href="/dashboard/offline-session"
 				class="col-span-1 rounded-lg text-black hover:border-blue-500 border-2 bg-white text-center shadow"
 			>
 				<div class="flex flex-1 justify-center items-center flex-col p-8">
@@ -18,6 +18,20 @@
 						class="inline-flex items-center rounded-full mt-3 w-fit bg-blue-50 px-3 py-2 text-blue-700 ring-1 ring-inset ring-blue-600/20"
 					>
 						<p>Starta!</p>
+					</div>
+				</div>
+			</a>
+			<a
+				href="/dashboard/offline-session-history"
+				class="col-span-1 rounded-lg text-black hover:border-blue-500 border-2 bg-white text-center shadow"
+			>
+				<div class="flex flex-1 justify-center items-center flex-col p-8">
+					<h3 class="">Se tidigare offline matcher</h3>
+					<p>Se tillbaks genom denna historiksida.</p>
+					<div
+						class="inline-flex items-center rounded-full mt-3 w-fit bg-blue-50 px-3 py-2 text-blue-700 ring-1 ring-inset ring-blue-600/20"
+					>
+						<p>Kolla nu!</p>
 					</div>
 				</div>
 			</a>

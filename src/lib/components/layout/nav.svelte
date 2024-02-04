@@ -29,7 +29,7 @@
 	const accountNavItems = [
 		{
 			name: 'Spela offline nu',
-			href: '/dashboard/session'
+			href: '/dashboard/offline-session'
 		},
 		{
 			name: 'Se skulder/vinster',
@@ -65,7 +65,7 @@
 			<div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
 				<button
 					type="button"
-					class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+					class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
 					aria-controls="mobile-menu"
 					aria-expanded="false"
 					on:click={() => (navOpen = !navOpen)}
@@ -121,7 +121,7 @@
 							<p>{$page.data.user?.firstName} {$page.data.user?.lastName}</p>
 							<button
 								type="button"
-								class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+								class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
 								aria-controls="mobile-menu"
 								aria-expanded="false"
 								on:click={() => (accountNavOpen = !accountNavOpen)}
@@ -223,7 +223,7 @@
 	}
 
 	.mobileNavItemActive {
-		@apply !bg-indigo-50 !border-blue-500 !text-blue-700;
+		@apply !bg-blue-50 !border-blue-500 !text-blue-700;
 	}
 
 	.navItemActive {

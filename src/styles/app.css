@@ -3,15 +3,19 @@
 @tailwind utilities;
 
 h1 {
-	@apply text-6xl mb-4;
+	@apply text-4xl font-semibold sm:text-6xl mb-4;
 }
 
 h2 {
-	@apply text-4xl block my-3;
+	@apply text-2xl font-semibold sm:text-4xl block my-3;
 }
 
 h3 {
-	@apply text-2xl block my-3;
+	@apply text-xl font-semibold sm:text-2xl block my-3;
+}
+
+h4 {
+	@apply text-lg sm:text-xl block my-3;
 }
 
 ul {

@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1707061590786,
+      "tag": "0000_amazing_rick_jones",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1707062655975,
+      "tag": "0001_whole_firebird",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1707074201948,
+      "tag": "0002_nasty_thanos",
+      "breakpoints": true
+    }
+  ]
+}

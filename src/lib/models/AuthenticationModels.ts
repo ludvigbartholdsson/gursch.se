@@ -7,9 +7,10 @@ export interface User {
 	firstName: string | null;
 	lastName: string | null;
 	emailAddress: string;
-	latestLogin: string;
-	latestChange: string;
-	created: string;
+	showInLeaderboard: boolean;
+	latestLogin: Date;
+	latestChange: Date;
+	created: Date;
 }
 
 export interface UserSession extends User {

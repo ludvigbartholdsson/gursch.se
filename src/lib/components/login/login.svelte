@@ -38,10 +38,12 @@
 					<input
 						bind:this={inputs[index]}
 						type="password"
+						pattern="[0-9]*"
+						inputmode="numeric"
 						maxlength="1"
 						on:keyup={(event) => focusNextInput(event, index)}
 						id={`code-${index + 1}`}
-						class="rounded-md flex items-center justify-center font-semibold text-center border-0 w-12 h-12 text-gray-900 shadow-sm ring-1 text-xl ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset !outline-none focus:ring-indigo-600"
+						class="rounded-md flex items-center justify-center font-semibold text-center border-0 w-12 h-12 text-gray-900 shadow-sm ring-1 text-xl ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset !outline-none focus:ring-blue-600"
 						required
 					/>
 				</div>

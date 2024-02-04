@@ -1,4 +1,4 @@
-import { loginSessions, users } from '$lib/models/DatabaseModels';
+import { loginSession, user } from '$lib/models/DatabaseModels';
 import { eq } from 'drizzle-orm';
 import { db } from './Database';
 import * as bcrypt from 'bcrypt';
@@ -9,7 +9,7 @@ const saltRounds = 10;
 export class AuthenticationService {
 	async verifyCorrelationId(correlationId: string): Promise<string | null> {
 		const ownerOfCorrelationId = (
-			await db.select().from(loginSessions).where(eq(loginSessions.correlationId, correlationId))
+			await db.select().from(loginSession).where(eq(loginSession.correlationId, correlationId))
 		)?.[0];
 
 		if (
@@ -23,24 +23,21 @@ export class AuthenticationService {
 	}
 
 	async getAccount(emailAddress: string): Promise<User> {
-		const account = (
-			await db.select().from(users).where(eq(users.emailAddress, emailAddress))
-		)?.[0];
+		const account = (await db.select().from(user).where(eq(user.emailAddress, emailAddress)))?.[0];
 
 		return {
 			firstName: account?.firstName,
 			lastName: account?.lastName,
+			showInLeaderboard: account.showInLeaderboard,
 			emailAddress: account.emailAddress,
-			latestLogin: account.latestLogin.toISOString(),
-			latestChange: account.latestChange.toISOString(),
-			created: account.created.toISOString()
+			latestLogin: account.latestLogin,
+			latestChange: account.latestChange,
+			created: account.created
 		};
 	}
 
 	async accountExists(emailAddress: string): Promise<boolean> {
-		const account = (
-			await db.select().from(users).where(eq(users.emailAddress, emailAddress))
-		)?.[0];
+		const account = (await db.select().from(user).where(eq(user.emailAddress, emailAddress)))?.[0];
 
 		return !!account;
 	}
@@ -49,11 +46,12 @@ export class AuthenticationService {
 		const salt = await bcrypt.genSalt(saltRounds);
 		const hashedPassword = await bcrypt.hash(password, salt);
 
-		await db.insert(users).values({
+		await db.insert(user).values({
 			emailAddress: emailAddress,
 			password: hashedPassword,
 			firstName,
 			lastName,
+			showInLeaderboard: true,
 			latestLogin: new Date(),
 			latestChange: new Date(),
 			created: new Date()
@@ -61,9 +59,7 @@ export class AuthenticationService {
 	}
 
 	async login(password: string, emailAddress: string): Promise<LoginResponse> {
-		const account = (
-			await db.select().from(users).where(eq(users.emailAddress, emailAddress))
-		)?.[0];
+		const account = (await db.select().from(user).where(eq(user.emailAddress, emailAddress)))?.[0];
 
 		if (!account) {
 			return {
@@ -80,13 +76,13 @@ export class AuthenticationService {
 		}
 
 		await db
-			.update(users)
+			.update(user)
 			.set({ latestLogin: new Date() })
-			.where(eq(users.emailAddress, emailAddress));
+			.where(eq(user.emailAddress, emailAddress));
 
 		const correlationId = crypto.randomUUID();
 
-		await db.insert(loginSessions).values({
+		await db.insert(loginSession).values({
 			emailAddress,
 			correlationId,
 			created: new Date()
@@ -98,7 +94,7 @@ export class AuthenticationService {
 	}
 
 	async signOut(correlationId: string) {
-		await db.delete(loginSessions).where(eq(loginSessions.correlationId, correlationId));
+		await db.delete(loginSession).where(eq(loginSession.correlationId, correlationId));
 	}
 
 	async changePassword(emailAddress: string, newPassword: string) {
@@ -106,8 +102,8 @@ export class AuthenticationService {
 		const hashedPassword = await bcrypt.hash(newPassword, salt);
 
 		await db
-			.update(users)
+			.update(user)
 			.set({ latestLogin: new Date(), password: hashedPassword })
-			.where(eq(users.emailAddress, emailAddress));
+			.where(eq(user.emailAddress, emailAddress));
 	}
 }

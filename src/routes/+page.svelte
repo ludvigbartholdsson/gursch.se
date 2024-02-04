@@ -13,6 +13,9 @@
 </div>
 
 <style lang="postcss">
+	:global(.discussionLanding h2) {
+		@apply mt-8;
+	}
 	:global(.discussionLanding a) {
 		@apply hover:underline;
 	}
