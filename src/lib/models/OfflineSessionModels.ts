@@ -20,13 +20,13 @@ export interface OfflineSessionOutcome {
 }
 
 export interface Player {
-	emailAddress: string;
+	userName: string;
 	firstName: string;
 	lastName: string;
 }
 
 export interface PlayerCard {
-	emailAddress: string;
+	userName: string;
 	cards: DeckCard[];
 	worth?: number;
 	forceWin?: boolean; // if worth is equal among winners, this player wins

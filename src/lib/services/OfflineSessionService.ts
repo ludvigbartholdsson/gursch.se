@@ -5,27 +5,73 @@ import type {
 	Player,
 	PlayerCard
 } from '$lib/models/OfflineSessionModels';
-import { eq, like, ne } from 'drizzle-orm';
+import { and, eq, like, ne, or } from 'drizzle-orm';
 import { db } from './Database';
 import type { ObjectOption } from 'svelte-multiselect';
 import { CardCalculator } from './CardCalculator';
+import { isThisMonth, isThisWeek } from './Utils';
 
 const cardCalculator = new CardCalculator();
 
 export class OfflineSessionService {
+	async getSummaryHistory(
+		period: 'week' | 'month' | 'all-time',
+		userName: string
+	): Promise<{
+		revenue: number;
+		won: number;
+		lost: number;
+	}> {
+		const outcomes = (
+			await db
+				.select()
+				.from(offlineSessionOutcome)
+				.where(
+					or(eq(offlineSessionOutcome.winner, userName), eq(offlineSessionOutcome.loser, userName))
+				)
+		).map((e) => {
+			return {
+				...e,
+				amount: Number(e.amount),
+				playerCards: JSON.parse(e.playerCards)
+			};
+		});
+
+		let outcomesAggregated = outcomes;
+
+		if (period === 'week') {
+			outcomesAggregated = outcomes.filter((e) => isThisWeek(e.created));
+		} else if (period === 'month') {
+			outcomesAggregated = outcomes.filter((e) => isThisMonth(e.created));
+		}
+
+		const wonTotal = outcomesAggregated
+			.filter((e) => e.winner === userName)
+			.reduce((acc, e) => acc + e.amount, 0);
+
+		const lostTotal = outcomesAggregated
+			.filter((e) => e.loser === userName)
+			.reduce((acc, e) => acc + e.amount, 0);
+
+		return {
+			revenue: outcomesAggregated.reduce((acc, e) => acc + e.amount, 0),
+			won: wonTotal,
+			lost: lostTotal
+		};
+	}
+
 	async listUsers(): Promise<ObjectOption[]> {
 		return (await db.select().from(user)).map((e) => {
 			return {
 				label: `${e.firstName} ${e.lastName}`,
-				value: e.emailAddress
+				value: e.userName
 			};
 		});
 	}
 
-	async listUserInitiatedSessions(emailAddress: string): Promise<OfflineSession[]> {
+	async listUserInitiatedSessions(userName: string): Promise<OfflineSession[]> {
 		const data =
-			(await db.select().from(offlineSession).where(eq(offlineSession.initiator, emailAddress))) ??
-			[];
+			(await db.select().from(offlineSession).where(eq(offlineSession.initiator, userName))) ?? [];
 
 		return data.map((e) => {
 			return {
@@ -35,14 +81,13 @@ export class OfflineSessionService {
 		});
 	}
 
-	async listUserParticipatedSessions(emailAddress: string): Promise<OfflineSession[]> {
+	async listUserParticipatedSessions(userName: string): Promise<OfflineSession[]> {
 		const data =
 			(await db
 				.select()
 				.from(offlineSession)
 				.where(
-					like(offlineSession.players, `%${emailAddress}%`) &&
-						ne(offlineSession.initiator, emailAddress)
+					and(like(offlineSession.players, `%${userName}%`), ne(offlineSession.initiator, userName))
 				)) ?? [];
 
 		return data.map((e) => {
@@ -113,14 +158,14 @@ export class OfflineSessionService {
 		cards: number,
 		players: string[],
 		multiplier: number,
-		emailAddress: string
+		userName: string
 	) {
 		const playersDb: Player[] = await Promise.all(
 			players.map(async (e) => {
-				const playerUser = (await db.select().from(user).where(eq(user.emailAddress, e)))?.[0];
+				const playerUser = (await db.select().from(user).where(eq(user.userName, e)))?.[0];
 
 				return {
-					emailAddress: e,
+					userName: e,
 					firstName: playerUser.firstName!,
 					lastName: playerUser.lastName!
 				};
@@ -130,7 +175,7 @@ export class OfflineSessionService {
 		const sessionId = crypto.randomUUID();
 
 		await db.insert(offlineSession).values({
-			initiator: emailAddress,
+			initiator: userName,
 			cards: cards,
 			players: JSON.stringify(playersDb),
 			multiplier: multiplier,
@@ -164,14 +209,14 @@ export class OfflineSessionService {
 		const amount = Math.round(losers[0].worth! * thisOfflineSession.multiplier);
 
 		// Double-check winners/losers
-		if (winners[0].emailAddress === losers[0].emailAddress) {
+		if (winners[0].userName === losers[0].userName) {
 			return;
 		}
 
 		await db.insert(offlineSessionOutcome).values({
 			playerCards: JSON.stringify(playerCards),
-			winner: winners[0].emailAddress,
-			loser: losers[0].emailAddress,
+			winner: winners[0].userName,
+			loser: losers[0].userName,
 			game: outcomes.length + 1,
 			amount: amount.toString(),
 			sessionId,

@@ -7,6 +7,7 @@ export interface User {
 	firstName: string | null;
 	lastName: string | null;
 	emailAddress: string;
+	userName: string;
 	showInLeaderboard: boolean;
 	latestLogin: Date;
 	latestChange: Date;

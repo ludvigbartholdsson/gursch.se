@@ -28,12 +28,12 @@
 
 	const accountNavItems = [
 		{
-			name: 'Spela offline nu',
+			name: 'Spela IRL nu',
 			href: '/dashboard/offline-session'
 		},
 		{
 			name: 'Se skulder/vinster',
-			href: '/dashboard/debts-wins'
+			href: '/dashboard/debts-wins/week'
 		},
 		{
 			name: 'Inställningar',

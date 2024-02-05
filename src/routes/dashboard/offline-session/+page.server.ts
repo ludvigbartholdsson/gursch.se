@@ -8,7 +8,7 @@ const offlineSessionService = new OfflineSessionService();
 export const load = (async ({ locals }) => {
 	return {
 		playableUsers: (await offlineSessionService.listUsers()).filter(
-			(e) => e.value !== locals.user.emailAddress
+			(e) => e.value !== locals.user.userName
 		)
 	};
 }) satisfies PageServerLoad;
@@ -35,7 +35,7 @@ export const actions = {
 
 		const validPlayers = (await offlineSessionService.listUsers())
 			.map((e: ObjectOption) => e.value)
-			.filter((e) => e !== locals.user.emailAddress);
+			.filter((e) => e !== locals.user.userName);
 
 		if (
 			players.length <= 0 ||
@@ -68,13 +68,13 @@ export const actions = {
 		}
 
 		const finalPlayers = players.map((e) => e.value);
-		finalPlayers.push(locals.user.emailAddress);
+		finalPlayers.push(locals.user.userName);
 
 		const sessionId = await offlineSessionService.createOfflineSession(
 			cards,
 			finalPlayers as string[],
 			multiplier,
-			locals.user.emailAddress
+			locals.user.userName
 		);
 
 		redirect(303, `/dashboard/offline-session/${sessionId}`);

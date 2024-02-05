@@ -7,14 +7,15 @@
 	import { CardCalculator } from '$lib/services/CardCalculator';
 	import Popup from '$lib/components/popup/index.svelte';
 	import type { PlayerCard } from '$lib/models/OfflineSessionModels';
+	import RoundInformation from '$lib/components/offline-session/roundInformation.svelte';
 
 	export let data: PageData;
 	let form: HTMLFormElement;
 	let selectedCards: Record<string, DeckCard[]> = {};
 
 	let playerCards: PlayerCard[] = [];
-	$: playerCards = Object.entries(selectedCards).map(([emailAddress, cards]) => ({
-		emailAddress,
+	$: playerCards = Object.entries(selectedCards).map(([userName, cards]) => ({
+		userName,
 		cards,
 		worth: undefined,
 		forceWin: undefined,
@@ -31,19 +32,19 @@
 
 	const cardCalculator = new CardCalculator();
 
-	function forceWinnerWorth(emailAddress: string) {
-		const i = playerCards.findIndex((e) => e.emailAddress === emailAddress);
+	function forceWinnerWorth(userName: string) {
+		const i = playerCards.findIndex((e) => e.userName === userName);
 		playerCards[i].forceWin = true;
 
 		if (playerCards.length === 2) {
-			forceLoserWorth(playerCards.find((e) => e.emailAddress !== emailAddress)!.emailAddress);
+			forceLoserWorth(playerCards.find((e) => e.userName !== userName)!.userName);
 		}
 
 		checkWinnersAndLosers();
 	}
 
-	function forceLoserWorth(emailAddress: string) {
-		const i = playerCards.findIndex((e) => e.emailAddress === emailAddress);
+	function forceLoserWorth(userName: string) {
+		const i = playerCards.findIndex((e) => e.userName === userName);
 		playerCards[i].forceLose = true;
 
 		checkWinnersAndLosers();
@@ -121,14 +122,14 @@
 		<div class="grid mt-4 grid-cols-2 gap-3">
 			{#each decideWinnerList as winner}
 				<button
-					on:click={() => forceWinnerWorth(winner.emailAddress)}
+					on:click={() => forceWinnerWorth(winner.userName)}
 					class="col-span-1 hover:border-blue-600 rounded-lg text-black border-2 bg-white text-center shadow"
 				>
 					<div class="flex flex-1 justify-center items-center flex-col py-1 px-2">
 						<p>
-							{data.session.players.find((e) => e.emailAddress === winner.emailAddress)?.firstName}
+							{data.session.players.find((e) => e.userName === winner.userName)?.firstName}
 							{data.session.players
-								.find((e) => e.emailAddress === winner.emailAddress)
+								.find((e) => e.userName === winner.userName)
 								?.lastName.slice(0, 1)}
 						</p>
 					</div>
@@ -146,14 +147,14 @@
 		<div class="grid mt-4 grid-cols-2 gap-3">
 			{#each decideLoserList as loser}
 				<button
-					on:click={() => forceLoserWorth(loser.emailAddress)}
+					on:click={() => forceLoserWorth(loser.userName)}
 					class="col-span-1 hover:border-blue-600 rounded-lg text-black border-2 bg-white text-center shadow"
 				>
 					<div class="flex flex-1 justify-center items-center flex-col py-1 px-2">
 						<p>
-							{data.session.players.find((e) => e.emailAddress === loser.emailAddress)?.firstName}
+							{data.session.players.find((e) => e.userName === loser.userName)?.firstName}
 							{data.session.players
-								.find((e) => e.emailAddress === loser.emailAddress)
+								.find((e) => e.userName === loser.userName)
 								?.lastName.slice(0, 1)}
 						</p>
 					</div>
@@ -172,7 +173,7 @@
 
 	<div class="flex flex-col gap-6">
 		{#if !data.sessionIsExpired}
-			{#if data.session.initiator === $page.data.user.emailAddress}
+			{#if data.session.initiator === $page.data.user.userName}
 				<form
 					bind:this={form}
 					on:submit|preventDefault={checkWinnersAndLosers}
@@ -190,9 +191,12 @@
 							<div>
 								<MultiSelect
 									id="color-select"
-									options={Object.values(DeckCard).filter((e) => typeof e === 'number')}
-									bind:selected={selectedCards[player.emailAddress]}
+									options={Object.values(DeckCard)
+										.filter((e) => typeof e !== 'number')
+										.map((e) => DeckFriendlyNames[DeckCard[e]])}
+									bind:selected={selectedCards[player.userName]}
 									placeholder="Välj kort"
+									noMatchingOptionsMsg={'Kort hittades ej.'}
 									allowUserOptions={false}
 									duplicates={true}
 									createOptionMsg={null}
@@ -201,7 +205,7 @@
 									let:idx
 									let:option
 								>
-									<p>{DeckFriendlyNames[option]}</p>
+									<p>{option}</p>
 								</MultiSelect>
 							</div>
 						</div>
@@ -289,54 +293,6 @@
 		<hr />
 
 		<div class="flex flex-col gap-2">
-			<h3 class="!my-0">Tidigare rundor</h3>
-			<div>
-				{#if !data.sessionOutcomes || data.sessionOutcomes.length === 0}
-					<p>N/A</p>
-				{:else}
-					<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-						{#each data.sessionOutcomes as outcome}
-							<div class="flex flex-col gap-2 col-span-1">
-								<h4 class="mt-0">Runda: {outcome.game}</h4>
-								<div class="flex flex-col gap-2">
-									<p>
-										Vinnare:
-										<strong>
-											{data.session.players.find((e) => e.emailAddress === outcome.winner)
-												?.firstName}
-											{data.session.players.find((e) => e.emailAddress === outcome.winner)
-												?.lastName}
-										</strong>
-										(gick ut på: {outcome.playerCards
-											.find((e) => e.emailAddress === outcome.winner)
-											?.cards.map((e) => DeckFriendlyNames[e])
-											.join(', ')})
-									</p>
-									<p>
-										Förlorare:
-										<strong>
-											{data.session.players.find((e) => e.emailAddress === outcome.loser)
-												?.firstName}
-											{data.session.players.find((e) => e.emailAddress === outcome.loser)?.lastName}
-										</strong>
-										(gick ut på: {outcome.playerCards
-											.find((e) => e.emailAddress === outcome.loser)
-											?.cards.map((e) => DeckFriendlyNames[e])
-											.join(', ')})
-									</p>
-									<p>Summa: {outcome.amount} kr</p>
-									<p>Spelad: {outcome.created.toLocaleString()}</p>
-								</div>
-							</div>
-						{/each}
-					</div>
-				{/if}
-			</div>
-		</div>
-
-		<hr />
-
-		<div class="flex flex-col gap-2">
 			<h3 class="!my-0">Information</h3>
 			<div class="flex flex-col gap-1">
 				<div class="flex flex-row gap-2">
@@ -355,8 +311,8 @@
 					<div class="flex items-center justify-between">
 						<p class="ring-1 ring-gray-300 bg-gray-100 rounded-md px-3 py-1">
 							{#if maxWinner}
-								{data.session.players.find((e) => e.emailAddress === maxWinner)?.firstName}
-								{data.session.players.find((e) => e.emailAddress === maxWinner)?.lastName} ({maxWinnerAmount}
+								{data.session.players.find((e) => e.userName === maxWinner)?.firstName}
+								{data.session.players.find((e) => e.userName === maxWinner)?.lastName} ({maxWinnerAmount}
 								kr)
 							{:else}
 								N/A
@@ -369,8 +325,8 @@
 					<div class="flex items-center justify-between">
 						<p class="ring-1 ring-gray-300 bg-gray-100 rounded-md px-3 py-1">
 							{#if maxLoser}
-								{data.session.players.find((e) => e.emailAddress === maxLoser)?.firstName}
-								{data.session.players.find((e) => e.emailAddress === maxLoser)?.lastName} ({maxLoserAmount}
+								{data.session.players.find((e) => e.userName === maxLoser)?.firstName}
+								{data.session.players.find((e) => e.userName === maxLoser)?.lastName} ({maxLoserAmount}
 								kr)
 							{:else}
 								N/A
@@ -388,7 +344,7 @@
 							<p class="ring-1 ring-gray-300 bg-gray-100 rounded-md px-3 py-1">
 								{player.firstName}
 								{player.lastName}
-								{#if player.emailAddress === $page.data.user.emailAddress}
+								{#if player.userName === $page.data.user.userName}
 									(du)
 								{/if}
 							</p>
@@ -412,6 +368,23 @@
 						{data.session.cards} st
 					</p>
 				</div>
+			</div>
+		</div>
+
+		<hr />
+
+		<div class="flex flex-col gap-2">
+			<h3 class="!my-0">Tidigare rundor</h3>
+			<div>
+				{#if !data.sessionOutcomes || data.sessionOutcomes.length === 0}
+					<p>N/A</p>
+				{:else}
+					<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+						{#each data.sessionOutcomes as outcome}
+							<RoundInformation {outcome} session={data.session} />
+						{/each}
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>

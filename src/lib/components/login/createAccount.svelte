@@ -5,6 +5,7 @@
 
 	export let emailAddress: string;
 
+	let userName: string = '';
 	let firstName: string = '';
 	let lastName: string = '';
 
@@ -25,6 +26,18 @@
 		}
 	}
 
+	function validateUserName(event: any) {
+		const pattern = /^[a-z0-9-_]+$/;
+
+		if (pattern.test(event.target.value)) {
+			userName = event.target.value;
+		} else {
+			if (event.target.value.length !== 0) {
+				event.target.value = userName;
+			}
+		}
+	}
+
 	function validateName(event: any, isFirstName: boolean) {
 		const pattern =
 			/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u; // Adjust the regex pattern to include any specific characters you want to allow
@@ -40,16 +53,34 @@
 				lastName = input;
 			}
 		} else {
-			if (isFirstName) {
-				event.target.value = firstName;
-			} else {
-				event.target.value = lastName;
+			if (event.target.value.length !== 0) {
+				if (isFirstName) {
+					event.target.value = firstName;
+				} else {
+					event.target.value = lastName;
+				}
 			}
 		}
 	}
 </script>
 
 <form class="space-y-6" method="POST" action="?/createAccount">
+	<div>
+		<label for="userName" class="block text-sm font-medium leading-6 text-gray-900"
+			>Användarnamn (kan komma bli offentligt)</label
+		>
+		<div class="mt-2">
+			<input
+				value={userName}
+				on:input={(e) => validateUserName(e)}
+				id="userName"
+				name="userName"
+				type="text"
+				required
+				class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 !outline-none sm:text-sm sm:leading-6"
+			/>
+		</div>
+	</div>
 	<div>
 		<label for="firstName" class="block text-sm font-medium leading-6 text-gray-900">Förnamn</label>
 		<div class="mt-2">
