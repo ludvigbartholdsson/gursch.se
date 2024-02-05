@@ -7,7 +7,7 @@
 	import { CardCalculator } from '$lib/services/CardCalculator';
 	import Popup from '$lib/components/popup/index.svelte';
 	import type { PlayerCard } from '$lib/models/OfflineSessionModels';
-	import RoundInformation from '$lib/components/offline-session/RoundInformation.svelte';
+	import RoundInformation from '$lib/components/offline-session/roundInformation.svelte';
 
 	export let data: PageData;
 	let form: HTMLFormElement;
