@@ -4,6 +4,7 @@ import { type PlayerCard } from '$lib/models/OfflineSessionModels';
 export class CardCalculator {
 	getLosers(players: PlayerCard[]): PlayerCard[] {
 		let highestScore = this.calculateScore(players[0].cards);
+		console.log(highestScore);
 		let losers: PlayerCard[] = [
 			{
 				...players[0],
@@ -110,7 +111,11 @@ export class CardCalculator {
 			}
 		});
 
-		totalValue += chameleonCount * lowestCardValue;
+		if (lowestCardValue !== Infinity) {
+			totalValue += chameleonCount * lowestCardValue;
+		} else {
+			return chameleonCount * DeckCard.Two;
+		}
 
 		return totalValue;
 	}

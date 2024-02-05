@@ -12,7 +12,7 @@
 				class="col-span-1 rounded-lg text-black hover:border-blue-500 border-2 bg-white text-center shadow"
 			>
 				<div class="flex flex-1 justify-center items-center flex-col p-8">
-					<h3 class="">Spela offline (fysiskt) nu</h3>
+					<h3 class="">Spela IRL (fysiskt) nu</h3>
 					<p>Ska du spela Gursch nu? Klicka här för att sätta igång en offline-session.</p>
 					<div
 						class="inline-flex items-center rounded-full mt-3 w-fit bg-blue-50 px-3 py-2 text-blue-700 ring-1 ring-inset ring-blue-600/20"
@@ -26,7 +26,7 @@
 				class="col-span-1 rounded-lg text-black hover:border-blue-500 border-2 bg-white text-center shadow"
 			>
 				<div class="flex flex-1 justify-center items-center flex-col p-8">
-					<h3 class="">Se tidigare offline matcher</h3>
+					<h3 class="">Se tidigare IRL matcher</h3>
 					<p>Se tillbaks genom denna historiksida.</p>
 					<div
 						class="inline-flex items-center rounded-full mt-3 w-fit bg-blue-50 px-3 py-2 text-blue-700 ring-1 ring-inset ring-blue-600/20"

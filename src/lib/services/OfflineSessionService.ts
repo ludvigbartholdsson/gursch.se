@@ -5,7 +5,7 @@ import type {
 	Player,
 	PlayerCard
 } from '$lib/models/OfflineSessionModels';
-import { eq, like, ne } from 'drizzle-orm';
+import { and, eq, like, ne } from 'drizzle-orm';
 import { db } from './Database';
 import type { ObjectOption } from 'svelte-multiselect';
 import { CardCalculator } from './CardCalculator';
@@ -15,7 +15,7 @@ const cardCalculator = new CardCalculator();
 export class OfflineSessionService {
 	async getProfitHistory(
 		period: 'week' | 'month' | 'all-time',
-		emailAddress: string
+		userName: string
 	): Promise<{
 		revenue: number;
 		won: number;
@@ -26,8 +26,7 @@ export class OfflineSessionService {
 				.select()
 				.from(offlineSessionOutcome)
 				.where(
-					eq(offlineSessionOutcome.winner, emailAddress) ||
-						eq(offlineSessionOutcome.loser, emailAddress)
+					eq(offlineSessionOutcome.winner, userName) || eq(offlineSessionOutcome.loser, userName)
 				)
 		).map((e) => {
 			return {
@@ -36,7 +35,7 @@ export class OfflineSessionService {
 			};
 		});
 
-		console.log(outcomes);
+		// TODO
 
 		return {
 			revenue: 0,
@@ -49,15 +48,14 @@ export class OfflineSessionService {
 		return (await db.select().from(user)).map((e) => {
 			return {
 				label: `${e.firstName} ${e.lastName}`,
-				value: e.emailAddress
+				value: e.userName
 			};
 		});
 	}
 
-	async listUserInitiatedSessions(emailAddress: string): Promise<OfflineSession[]> {
+	async listUserInitiatedSessions(userName: string): Promise<OfflineSession[]> {
 		const data =
-			(await db.select().from(offlineSession).where(eq(offlineSession.initiator, emailAddress))) ??
-			[];
+			(await db.select().from(offlineSession).where(eq(offlineSession.initiator, userName))) ?? [];
 
 		return data.map((e) => {
 			return {
@@ -67,14 +65,13 @@ export class OfflineSessionService {
 		});
 	}
 
-	async listUserParticipatedSessions(emailAddress: string): Promise<OfflineSession[]> {
+	async listUserParticipatedSessions(userName: string): Promise<OfflineSession[]> {
 		const data =
 			(await db
 				.select()
 				.from(offlineSession)
 				.where(
-					like(offlineSession.players, `%${emailAddress}%`) &&
-						ne(offlineSession.initiator, emailAddress)
+					and(like(offlineSession.players, `%${userName}%`), ne(offlineSession.initiator, userName))
 				)) ?? [];
 
 		return data.map((e) => {
@@ -145,14 +142,14 @@ export class OfflineSessionService {
 		cards: number,
 		players: string[],
 		multiplier: number,
-		emailAddress: string
+		userName: string
 	) {
 		const playersDb: Player[] = await Promise.all(
 			players.map(async (e) => {
-				const playerUser = (await db.select().from(user).where(eq(user.emailAddress, e)))?.[0];
+				const playerUser = (await db.select().from(user).where(eq(user.userName, e)))?.[0];
 
 				return {
-					emailAddress: e,
+					userName: e,
 					firstName: playerUser.firstName!,
 					lastName: playerUser.lastName!
 				};
@@ -162,7 +159,7 @@ export class OfflineSessionService {
 		const sessionId = crypto.randomUUID();
 
 		await db.insert(offlineSession).values({
-			initiator: emailAddress,
+			initiator: userName,
 			cards: cards,
 			players: JSON.stringify(playersDb),
 			multiplier: multiplier,
@@ -196,14 +193,14 @@ export class OfflineSessionService {
 		const amount = Math.round(losers[0].worth! * thisOfflineSession.multiplier);
 
 		// Double-check winners/losers
-		if (winners[0].emailAddress === losers[0].emailAddress) {
+		if (winners[0].userName === losers[0].userName) {
 			return;
 		}
 
 		await db.insert(offlineSessionOutcome).values({
 			playerCards: JSON.stringify(playerCards),
-			winner: winners[0].emailAddress,
-			loser: losers[0].emailAddress,
+			winner: winners[0].userName,
+			loser: losers[0].userName,
 			game: outcomes.length + 1,
 			amount: amount.toString(),
 			sessionId,

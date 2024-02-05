@@ -13,9 +13,12 @@ import {
 export const user = mysqlTable(
 	'user',
 	{
+		userName: varchar('userName', {
+			length: 126
+		}).primaryKey(),
 		emailAddress: varchar('emailAddress', {
 			length: 256
-		}).primaryKey(),
+		}).notNull(),
 		firstName: varchar('firstName', {
 			length: 256
 		}),
@@ -27,14 +30,14 @@ export const user = mysqlTable(
 		created: datetime('created', { mode: 'date' }).notNull()
 	},
 	(user) => ({
-		email: uniqueIndex('email_idx').on(user.emailAddress)
+		userName: uniqueIndex('username_index').on(user.userName)
 	})
 );
 
 export const loginSession = mysqlTable('loginSession', {
 	id: serial('id').primaryKey(),
-	emailAddress: varchar('emailAddress', {
-		length: 256
+	userName: varchar('userName', {
+		length: 126
 	}).notNull(),
 	correlationId: varchar('correlationId', {
 		length: 128

@@ -5,11 +5,12 @@ const offlineSessionService = new OfflineSessionService();
 
 export const load = (async ({ locals }) => {
 	return {
-		initiatedSessions: await offlineSessionService.listUserInitiatedSessions(
-			locals.user.emailAddress
-		),
-		participatedSessions: await offlineSessionService.listUserParticipatedSessions(
-			locals.user.emailAddress
-		)
+		initiatedSessions: (
+			await offlineSessionService.listUserInitiatedSessions(locals.user.userName)
+		).sort((a, b) => Number(new Date(b.created)) - Number(new Date(a.created))),
+
+		participatedSessions: (
+			await offlineSessionService.listUserParticipatedSessions(locals.user.userName)
+		).sort((a, b) => Number(new Date(b.created)) - Number(new Date(a.created)))
 	};
 }) satisfies PageServerLoad;

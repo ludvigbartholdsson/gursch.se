@@ -58,12 +58,12 @@ export const actions = {
 			error(401);
 		}
 
-		if (session.initiator !== locals.user.emailAddress) {
+		if (session.initiator !== locals.user.userName) {
 			error(401);
 		}
 
 		const playerCardsSimple: Record<string, DeckCard[]> = cards.reduce((acc, playerCard) => {
-			acc[playerCard.emailAddress] = playerCard.cards;
+			acc[playerCard.userName] = playerCard.cards;
 			return acc;
 		}, {});
 

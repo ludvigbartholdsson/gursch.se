@@ -1,4 +1,5 @@
 export enum DeckCard {
+	Chameleon = 15, // Depends
 	Two = 2,
 	Three = 3,
 	Four = 4,
@@ -11,8 +12,7 @@ export enum DeckCard {
 	Jack = 11,
 	Queen = 12,
 	King = 13,
-	Ace = 14,
-	Chameleon // Depends
+	Ace = 14
 }
 
 export const DeckFriendlyNames = {

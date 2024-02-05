@@ -28,7 +28,7 @@
 
 	const accountNavItems = [
 		{
-			name: 'Spela offline nu',
+			name: 'Spela IRL nu',
 			href: '/dashboard/offline-session'
 		},
 		{

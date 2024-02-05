@@ -16,6 +16,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			event.locals.user = {
 				firstName: account?.firstName,
 				lastName: account?.lastName,
+				userName: account?.userName,
 				emailAddress: account.emailAddress,
 				latestLogin: account.latestLogin,
 				latestChange: account.latestChange,

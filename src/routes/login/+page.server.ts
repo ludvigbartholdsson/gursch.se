@@ -5,6 +5,7 @@ import { AuthenticationService } from '$lib/services/AuthenticationService';
 const databaseService = new AuthenticationService();
 
 export const load = (async ({ locals }) => {
+	await databaseService.test();
 	if (locals?.user) {
 		redirect(307, '/dashboard');
 	}
@@ -46,12 +47,13 @@ export const actions = {
 
 	createAccount: async ({ request, cookies }) => {
 		const data = await request.formData();
+		const userName = data.get('userName')?.toString().trim();
 		const email = data.get('emailAddress')?.toString().trim();
 		const password = data.get('password')?.toString().trim();
 		const firstName = data.get('firstName')?.toString().trim();
 		const lastName = data.get('lastName')?.toString().trim();
 
-		if (!password || !email || !firstName || !lastName) {
+		if (!password || !email || !firstName || !lastName || !userName) {
 			return {
 				failure: {
 					status: 400,
@@ -69,9 +71,20 @@ export const actions = {
 			};
 		}
 
-		await databaseService.createAccount(email, password, firstName, lastName);
+		const userNameExists = await databaseService.userNameExists(userName);
 
-		const loginInformation = await databaseService.login(password, email);
+		if (userNameExists) {
+			return {
+				failure: {
+					status: 400,
+					message: 'Användarnamnet är redan taget.'
+				}
+			};
+		}
+
+		await databaseService.createAccount(userName, email, password, firstName, lastName);
+
+		const loginInformation = await databaseService.login(password, undefined, userName);
 
 		if (loginInformation?.error) {
 			return {
