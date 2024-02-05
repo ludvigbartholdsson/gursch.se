@@ -5,15 +5,16 @@ import type {
 	Player,
 	PlayerCard
 } from '$lib/models/OfflineSessionModels';
-import { and, eq, like, ne } from 'drizzle-orm';
+import { and, eq, like, ne, or } from 'drizzle-orm';
 import { db } from './Database';
 import type { ObjectOption } from 'svelte-multiselect';
 import { CardCalculator } from './CardCalculator';
+import { isThisMonth, isThisWeek } from './Utils';
 
 const cardCalculator = new CardCalculator();
 
 export class OfflineSessionService {
-	async getProfitHistory(
+	async getSummaryHistory(
 		period: 'week' | 'month' | 'all-time',
 		userName: string
 	): Promise<{
@@ -26,21 +27,36 @@ export class OfflineSessionService {
 				.select()
 				.from(offlineSessionOutcome)
 				.where(
-					eq(offlineSessionOutcome.winner, userName) || eq(offlineSessionOutcome.loser, userName)
+					or(eq(offlineSessionOutcome.winner, userName), eq(offlineSessionOutcome.loser, userName))
 				)
 		).map((e) => {
 			return {
 				...e,
-				playerCards: e.playerCards
+				amount: Number(e.amount),
+				playerCards: JSON.parse(e.playerCards)
 			};
 		});
 
-		// TODO
+		let outcomesAggregated = outcomes;
+
+		if (period === 'week') {
+			outcomesAggregated = outcomes.filter((e) => isThisWeek(e.created));
+		} else if (period === 'month') {
+			outcomesAggregated = outcomes.filter((e) => isThisMonth(e.created));
+		}
+
+		const wonTotal = outcomesAggregated
+			.filter((e) => e.winner === userName)
+			.reduce((acc, e) => acc + e.amount, 0);
+
+		const lostTotal = outcomesAggregated
+			.filter((e) => e.loser === userName)
+			.reduce((acc, e) => acc + e.amount, 0);
 
 		return {
-			revenue: 0,
-			won: 0,
-			lost: 0
+			revenue: outcomesAggregated.reduce((acc, e) => acc + e.amount, 0),
+			won: wonTotal,
+			lost: lostTotal
 		};
 	}
 

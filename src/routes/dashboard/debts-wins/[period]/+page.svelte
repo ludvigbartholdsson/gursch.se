@@ -1,5 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import type { PageServerData } from './$types';
+	export let data: PageServerData;
+
+	const SEK = new Intl.NumberFormat('sv-SE', {
+		style: 'currency',
+		currency: 'SEK'
+	});
 </script>
 
 <div class="container mx-auto flex flex-col gap-6 py-12">
@@ -31,28 +38,28 @@
 				<dt class="text-sm font-medium leading-6 text-gray-500">Spelat om</dt>
 				<dd class="text-xs font-medium text-gray-700">+4.75%</dd>
 				<dd class="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
-					20,000 kr
+					{SEK.format(data.summaryHistory.revenue)}
 				</dd>
 			</div>
 			<div class="historyItem">
 				<dt class="text-sm font-medium leading-6 text-gray-500">Vunnit</dt>
 				<dd class="text-xs font-medium text-rose-600">+54.02%</dd>
 				<dd class="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
-					14, 000 kr
+					{SEK.format(data.summaryHistory.won)}
 				</dd>
 			</div>
 			<div class="historyItem">
 				<dt class="text-sm font-medium leading-6 text-gray-500">Förlorat</dt>
 				<dd class="text-xs font-medium text-gray-700">-1.39%</dd>
 				<dd class="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
-					10 000 kr
+					{SEK.format(data.summaryHistory.lost)}
 				</dd>
 			</div>
 			<div class="historyItem">
 				<dt class="text-sm font-medium leading-6 text-gray-500">Total vinst/förlust</dt>
 				<dd class="text-xs font-medium text-rose-600">+10.18%</dd>
 				<dd class="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
-					4 000 kr
+					{SEK.format(data.summaryHistory.won - data.summaryHistory.lost)}
 				</dd>
 			</div>
 		</dl>

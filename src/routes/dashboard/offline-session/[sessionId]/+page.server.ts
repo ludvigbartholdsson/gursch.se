@@ -8,7 +8,7 @@ import type { PlayerCard } from '$lib/models/OfflineSessionModels';
 const offlineSessionService = new OfflineSessionService();
 const cardCalculator = new CardCalculator();
 
-export const load = (async ({ params, locals }) => {
+export const load = (async ({ params }) => {
 	const sessionId = params.sessionId;
 
 	const session = await offlineSessionService.getOfflineSession(sessionId);

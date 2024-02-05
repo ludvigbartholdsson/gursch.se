@@ -1,4 +1,9 @@
-import { loginSession, offlineSession, user } from '$lib/models/DatabaseModels';
+import {
+	loginSession,
+	offlineSession,
+	offlineSessionOutcome,
+	user
+} from '$lib/models/DatabaseModels';
 import { eq, or } from 'drizzle-orm';
 import { db } from './Database';
 import * as bcrypt from 'bcrypt';
@@ -7,32 +12,6 @@ import type { LoginResponse, User } from '$lib/models/AuthenticationModels';
 const saltRounds = 10;
 
 export class AuthenticationService {
-	async test(): Promise<void> {
-		const sessions = await db.select().from(offlineSession);
-
-		sessions.forEach(async (session) => {
-			const players = JSON.parse(session.players);
-
-			for (let i = 0; i < players.length; i++) {
-				const sessions = await db
-					.select()
-					.from(user)
-					.where(eq(user.emailAddress, players[i].emailAddress));
-
-				Object.assign(players[i], {
-					userName: sessions[0].userName
-				});
-
-				delete players[i].emailAddress;
-			}
-
-			await db
-				.update(offlineSession)
-				.set({ players: JSON.stringify(players) })
-				.where(eq(offlineSession.sessionId, session.sessionId));
-		});
-	}
-
 	async verifyCorrelationId(correlationId: string): Promise<string | null> {
 		const ownerOfCorrelationId = (
 			await db.select().from(loginSession).where(eq(loginSession.correlationId, correlationId))

@@ -5,7 +5,6 @@ import { AuthenticationService } from '$lib/services/AuthenticationService';
 const databaseService = new AuthenticationService();
 
 export const load = (async ({ locals }) => {
-	await databaseService.test();
 	if (locals?.user) {
 		redirect(307, '/dashboard');
 	}

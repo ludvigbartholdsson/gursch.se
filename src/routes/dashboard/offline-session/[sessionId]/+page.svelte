@@ -7,6 +7,7 @@
 	import { CardCalculator } from '$lib/services/CardCalculator';
 	import Popup from '$lib/components/popup/index.svelte';
 	import type { PlayerCard } from '$lib/models/OfflineSessionModels';
+	import RoundInformation from '$lib/components/offline-session/RoundInformation.svelte';
 
 	export let data: PageData;
 	let form: HTMLFormElement;
@@ -292,51 +293,6 @@
 		<hr />
 
 		<div class="flex flex-col gap-2">
-			<h3 class="!my-0">Tidigare rundor</h3>
-			<div>
-				{#if !data.sessionOutcomes || data.sessionOutcomes.length === 0}
-					<p>N/A</p>
-				{:else}
-					<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-						{#each data.sessionOutcomes as outcome}
-							<div class="flex flex-col gap-2 col-span-1">
-								<h4 class="mt-0">Runda: {outcome.game}</h4>
-								<div class="flex flex-col gap-2">
-									<p>
-										Vinnare:
-										<strong>
-											{data.session.players.find((e) => e.userName === outcome.winner)?.firstName}
-											{data.session.players.find((e) => e.userName === outcome.winner)?.lastName}
-										</strong>
-										(gick ut på: {outcome.playerCards
-											.find((e) => e.userName === outcome.winner)
-											?.cards.map((e) => DeckFriendlyNames[e])
-											.join(', ')})
-									</p>
-									<p>
-										Förlorare:
-										<strong>
-											{data.session.players.find((e) => e.userName === outcome.loser)?.firstName}
-											{data.session.players.find((e) => e.userName === outcome.loser)?.lastName}
-										</strong>
-										(gick ut på: {outcome.playerCards
-											.find((e) => e.userName === outcome.loser)
-											?.cards.map((e) => DeckFriendlyNames[e])
-											.join(', ')})
-									</p>
-									<p>Summa: {outcome.amount} kr</p>
-									<p>Spelad: {outcome.created.toLocaleString()}</p>
-								</div>
-							</div>
-						{/each}
-					</div>
-				{/if}
-			</div>
-		</div>
-
-		<hr />
-
-		<div class="flex flex-col gap-2">
 			<h3 class="!my-0">Information</h3>
 			<div class="flex flex-col gap-1">
 				<div class="flex flex-row gap-2">
@@ -412,6 +368,23 @@
 						{data.session.cards} st
 					</p>
 				</div>
+			</div>
+		</div>
+
+		<hr />
+
+		<div class="flex flex-col gap-2">
+			<h3 class="!my-0">Tidigare rundor</h3>
+			<div>
+				{#if !data.sessionOutcomes || data.sessionOutcomes.length === 0}
+					<p>N/A</p>
+				{:else}
+					<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+						{#each data.sessionOutcomes as outcome}
+							<RoundInformation {outcome} session={data.session} />
+						{/each}
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>

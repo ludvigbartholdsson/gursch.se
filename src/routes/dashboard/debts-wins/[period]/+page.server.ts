@@ -9,6 +9,10 @@ export const load = (async ({ locals, params }) => {
 		error(401);
 	}
 
-	await offlineSessionService.getProfitHistory(params.period, locals.user.userName);
-	return {};
+	return {
+		summaryHistory: await offlineSessionService.getSummaryHistory(
+			params.period,
+			locals.user.userName
+		)
+	};
 }) satisfies PageServerLoad;
