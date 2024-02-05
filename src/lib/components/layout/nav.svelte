@@ -33,7 +33,7 @@
 		},
 		{
 			name: 'Se skulder/vinster',
-			href: '/dashboard/debts-wins'
+			href: '/dashboard/debts-wins/week'
 		},
 		{
 			name: 'Inställningar',

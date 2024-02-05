@@ -47,7 +47,7 @@
 				</div>
 			</div>
 			<a
-				href="/dashboard/debts-wins"
+				href="/dashboard/debts-wins/week"
 				class="col-span-1 rounded-lg justify-center items-center text-black hover:border-blue-500 border-2 bg-white text-center shadow"
 			>
 				<div class="flex flex-1 justify-center items-center flex-col p-8">

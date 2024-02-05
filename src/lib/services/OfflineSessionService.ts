@@ -13,6 +13,38 @@ import { CardCalculator } from './CardCalculator';
 const cardCalculator = new CardCalculator();
 
 export class OfflineSessionService {
+	async getProfitHistory(
+		period: 'week' | 'month' | 'all-time',
+		emailAddress: string
+	): Promise<{
+		revenue: number;
+		won: number;
+		lost: number;
+	}> {
+		const outcomes = (
+			await db
+				.select()
+				.from(offlineSessionOutcome)
+				.where(
+					eq(offlineSessionOutcome.winner, emailAddress) ||
+						eq(offlineSessionOutcome.loser, emailAddress)
+				)
+		).map((e) => {
+			return {
+				...e,
+				playerCards: e.playerCards
+			};
+		});
+
+		console.log(outcomes);
+
+		return {
+			revenue: 0,
+			won: 0,
+			lost: 0
+		};
+	}
+
 	async listUsers(): Promise<ObjectOption[]> {
 		return (await db.select().from(user)).map((e) => {
 			return {
