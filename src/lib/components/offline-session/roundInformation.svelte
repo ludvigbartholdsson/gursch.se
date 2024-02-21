@@ -9,7 +9,7 @@
 </script>
 
 <div class="flex flex-col gap-2 col-span-1">
-	<h4 class="mt-0">Runda: {outcome.game}</h4>
+	<h4 class="mt-0">Runda: {outcome.round}</h4>
 	<div class="flex flex-col gap-2">
 		<p>
 			Vinnare:

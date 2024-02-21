@@ -63,7 +63,7 @@ export const offlineSessionOutcome = mysqlTable('offlineSessionOutcome', {
 	sessionId: varchar('sessionId', {
 		length: 128
 	}).notNull(),
-	game: int('game').notNull(),
+	round: int('round').notNull(),
 	playerCards: text('playerCards').notNull(),
 	winner: varchar('winner', {
 		length: 256
@@ -72,5 +72,19 @@ export const offlineSessionOutcome = mysqlTable('offlineSessionOutcome', {
 		length: 256
 	}).notNull(),
 	amount: decimal('amount').notNull(),
+	created: datetime('created', { mode: 'date' }).notNull()
+});
+
+export const onlineSession = mysqlTable('onlineSession', {
+	sessionId: varchar('sessionId', {
+		length: 128
+	}).primaryKey(),
+	initiator: varchar('initiator', {
+		length: 256
+	}).notNull(),
+	allowThrows: boolean('allowThrows').notNull(),
+	players: text('players').notNull(),
+	cards: int('cards').notNull(),
+	multiplier: int('multiplier').notNull(),
 	created: datetime('created', { mode: 'date' }).notNull()
 });

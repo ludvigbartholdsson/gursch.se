@@ -29,6 +29,20 @@
       "when": 1707126694406,
       "tag": "0003_chief_thunderbolt",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1708534231916,
+      "tag": "0004_oval_dreadnoughts",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1708536281818,
+      "tag": "0005_small_rafael_vega",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,1 @@
+ALTER TABLE `onlineSession` ADD `allowThrows` boolean NOT NULL;

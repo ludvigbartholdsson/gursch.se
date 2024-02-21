@@ -1,7 +1,7 @@
 import { OfflineSessionService } from '$lib/services/OfflineSessionService';
 import { error, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { DeckCard } from '$lib/models/DeckCard';
+import { DeckCard } from '$lib/models/DeckCard';
 import { CardCalculator } from '$lib/services/CardCalculator';
 import type { PlayerCard } from '$lib/models/OfflineSessionModels';
 
@@ -45,6 +45,7 @@ export const actions = {
 		}
 
 		const cards: PlayerCard[] = JSON.parse(cardsString);
+
 		const session = await offlineSessionService.getOfflineSession(sessionId);
 
 		if (!session) {

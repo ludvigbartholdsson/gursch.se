@@ -11,16 +11,23 @@
 
 	export let data: PageData;
 	let form: HTMLFormElement;
-	let selectedCards: Record<string, DeckCard[]> = {};
+	let selectedCards: Record<string, string[]> = {};
 
 	let playerCards: PlayerCard[] = [];
-	$: playerCards = Object.entries(selectedCards).map(([userName, cards]) => ({
-		userName,
-		cards,
-		worth: undefined,
-		forceWin: undefined,
-		forceLose: undefined
-	}));
+	$: playerCards = Object.entries(selectedCards).map(([userName, cardNames]) => {
+		const cards = cardNames.map((name) => {
+			const enumKey = reverseDeckFriendlyNames[name] as keyof typeof DeckCard;
+			return Number(enumKey);
+		});
+
+		return {
+			userName,
+			cards,
+			worth: undefined,
+			forceWin: undefined,
+			forceLose: undefined
+		};
+	});
 	let playerCardsStringified: string;
 	$: playerCardsStringified = JSON.stringify(playerCards);
 
@@ -29,6 +36,10 @@
 
 	let decideLoserList: PlayerCard[] = [];
 	let decideLoser = false;
+
+	const reverseDeckFriendlyNames = Object.fromEntries(
+		Object.entries(DeckFriendlyNames).map(([key, value]) => [value, key])
+	);
 
 	const cardCalculator = new CardCalculator();
 
